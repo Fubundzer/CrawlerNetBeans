@@ -120,7 +120,7 @@ public class GetEmailAndFb implements Runnable {
                 fb_id.add(m.group(4));
             }
         }
-        Thread.currentThread().interrupt();
+        //Thread.currentThread().interrupt();
     }
 }
 

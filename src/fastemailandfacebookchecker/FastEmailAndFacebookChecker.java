@@ -26,19 +26,22 @@ import java.util.regex.Pattern;
 public class FastEmailAndFacebookChecker {
 
     private static List<GetEmailAndFb> threadList = new ArrayList<>();
+    private static List<Thread> threads = new ArrayList<>();
 
     /**
      * @param args the command line arguments
      * @throws java.io.IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         
 //        getListOfDomains(args[0]).stream().forEach((String domain) -> {
 //        	addToChecking(domain);
 //        });
         
     	List <String> domains = getListOfDomains("/home/michalr/Dokumenty/Dla Kotana (1).csv");
-    	
+  
+        
+        
     	/*int i;
     	for(i=1;i<100;i++)
     	{
@@ -52,7 +55,7 @@ public class FastEmailAndFacebookChecker {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    	}*
+    	}*/
         
         /*int i=1;
     	for(String dom : domains){
@@ -60,13 +63,31 @@ public class FastEmailAndFacebookChecker {
             System.out.println("Thread number: " + domains.indexOf(dom));
             i++;
             if(i==30){
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(FastEmailAndFacebookChecker.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 i=1;
             }
         }*/
         
+        
+        int i=0;
+        int j=0;
         for(String dom : domains){
             addToChecking(dom);
-            System.out.println("Thread number: " + domains.indexOf(dom));
+            //System.out.println("Thread number: " + domains.indexOf(dom));
+            //for(j=1;j<30;j++){
+                threads.get(domains.indexOf(dom)).start();
+                System.out.println("Thread number: " + domains.indexOf(dom));
+                i++;
+                if(i%30==0){
+                    for(j=i-30;j<i;j++){
+                        threads.get(j).join();
+                    }
+                }
+            //}
         }
        //addToChecking("1000slow.pl");
        //addToChecking("2soczewki.pl");
@@ -101,9 +122,10 @@ public class FastEmailAndFacebookChecker {
         GetEmailAndFb geaf = new GetEmailAndFb(_d);
         threadList.add(geaf);
         Thread thr = new Thread(geaf);
-        thr.start();
+        threads.add(thr);
+        //thr.start();
         try {
-            Thread.sleep(100);
+            Thread.sleep(0);
         } catch (InterruptedException ex) {
             Logger.getLogger(FastEmailAndFacebookChecker.class.getName()).log(Level.SEVERE, null, ex);
         }
