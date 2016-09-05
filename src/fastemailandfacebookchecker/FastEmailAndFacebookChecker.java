@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -39,15 +41,17 @@ public class FastEmailAndFacebookChecker {
 //        });
         
     	List <String> domains = getListOfDomains("/home/michalr/Dokumenty/Dla Kotana (1).csv");
-  
+  ExecutorService taskExecutor = Executors.newCachedThreadPool();
         
         
-    	/*int i;
-    	for(i=1;i<100;i++)
+    	int i;
+    	for(i=0;i<100;i++)
     	{
 
     		try {
     			addToChecking(domains.get(i));
+                       // threads.get(i).start();
+                        taskExecutor.submit(threads.get(i));
                         System.out.println("Thread number: " + i);
 				Thread.sleep(0);
                 
@@ -55,7 +59,9 @@ public class FastEmailAndFacebookChecker {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    	}*/
+    	}
+        
+        taskExecutor.shutdown();
         
         /*int i=1;
     	for(String dom : domains){
@@ -71,9 +77,10 @@ public class FastEmailAndFacebookChecker {
                 i=1;
             }
         }*/
+        // addToChecking("1000karm.pl");
+        // System.out.println(threadList.get(0).emails);
         
-        
-        int i=0;
+        /*int i=0;
         int j=0;
         for(String dom : domains){
             addToChecking(dom);
@@ -88,11 +95,12 @@ public class FastEmailAndFacebookChecker {
                     }
                 }
             //}
-        }
+        }*/
        //addToChecking("1000slow.pl");
        //addToChecking("2soczewki.pl");
-       //addToChecking("24akumulatory.pl");
+      // addToChecking("24akumulatory.pl");
        
+      String out;
        PrintWriter output = createFile("/home/michalr/Dokumenty/test.txt");
         int index;
         try {
@@ -102,17 +110,27 @@ public class FastEmailAndFacebookChecker {
         }
         for(GetEmailAndFb geaf : threadList){
         	index =threadList.indexOf(geaf);
+                //output.print("email of "+geaf.getDomain()+": ");
+                out="";
         for(String _e : threadList.get(index).emails){
             System.out.println("email of "+geaf.getDomain()+": "+ _e);
-            output.println("email of "+geaf.getDomain()+": " + _e);
+            //output.print(_e +" ; ");
+            out+=_e+" |;|";
         }
+        if(!out.equals(""))
+            output.println("email of "+geaf.getDomain()+": "+out);
         }
         for(GetEmailAndFb geaf : threadList){
         	index =threadList.indexOf(geaf);
+                //output.print("fb_id of "+geaf.getDomain()+": ");
+                out="";
         for(String _fb : threadList.get(index).fb_id){
             System.out.println("facebook_id of "+geaf.getDomain()+": " + _fb);
-            output.println("facebook_id of "+geaf.getDomain()+": " + _fb);
+            //output.print(_fb +" |;| ");
+            out+=_fb+" |;|";
         }
+        if(!out.equals(""))
+            output.println("fb_id of "+geaf.getDomain()+": "+out);
         }
         
         output.close();
@@ -125,7 +143,7 @@ public class FastEmailAndFacebookChecker {
         threads.add(thr);
         //thr.start();
         try {
-            Thread.sleep(0);
+            Thread.sleep(250);
         } catch (InterruptedException ex) {
             Logger.getLogger(FastEmailAndFacebookChecker.class.getName()).log(Level.SEVERE, null, ex);
         }

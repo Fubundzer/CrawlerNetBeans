@@ -106,7 +106,7 @@ public class GetEmailAndFb implements Runnable {
         while ((line = br.readLine()) != null) {
             sb.append(line);
         }
-        System.out.println(sb);
+        //System.out.println(sb);
         Matcher m = Pattern.compile(REGEX).matcher(sb);
         while (m.find()) {
             if (m.group(1) != null && !m.group(1).isEmpty()) {
